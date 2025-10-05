@@ -1,0 +1,19 @@
+package com.proyecto.repository;
+
+import com.proyecto.model.Actividad;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+ * Interfaz de repositorio JPA para operaciones CRUD en la tabla actividades.
+ */
+public interface ActividadRepository extends JpaRepository<Actividad, Long> {
+    /**
+     * Método para obtener todas las actividades programadas en una fecha específica.
+     *
+     * @param fecha Fecha para filtrar actividades.
+     * @return Lista de actividades de la fecha indicada.
+     */
+    List<Actividad> findByFecha(LocalDate fecha);
+}
