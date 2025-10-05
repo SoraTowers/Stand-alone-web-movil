@@ -1,0 +1,84 @@
+package com.proyecto.controller;
+
+import com.proyecto.model.Actividad;
+import com.proyecto.service.ActividadService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+ * Controlador web para manejar solicitudes relacionadas con la gestión de horarios.
+ * Responde a rutas bajo /horario.
+ */
+@Controller
+@RequestMapping("/horario")
+public class HorarioController {
+
+    @Autowired
+    private ActividadService actividadService;
+
+    /**
+     * Método GET para mostrar el formulario de registro y listar actividades de una fecha.
+     * Si no se recibe fecha como parámetro, se usa la fecha actual.
+     *
+     * @param fecha Parámetro opcional de consulta con fecha.
+     * @param model Objeto model para pasar datos a la vista.
+     * @return Nombre de la vista a renderizar (horario.html).
+     */
+    @GetMapping
+    public String mostrarFormulario(@RequestParam(required = false)
+                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+                                   Model model) {
+        if (fecha == null) {
+            fecha = LocalDate.now();
+        }
+        List<Actividad> actividades = actividadService.obtenerActividadesPorFecha(fecha);
+        model.addAttribute("fechaConsulta", fecha);
+        model.addAttribute("actividades", actividades);
+        model.addAttribute("actividadNueva", new Actividad());
+        return "horario"; // Vista Thymeleaf o JSP
+    }
+
+    /**
+     * Método POST para agregar una nueva actividad.
+     *
+     * @param actividad Objeto Actividad enviado desde el formulario.
+     * @param model Modelo para la vista.
+     * @return Redirecciona a la lista de actividades de la fecha agregada.
+     */
+    @PostMapping("/agregar")
+    public String agregarActividad(@Valid @ModelAttribute("actividadNueva") Actividad actividad, Model model) {
+        actividadService.guardarActividad(actividad);
+        return "redirect:/horario?fecha=" + actividad.getFecha();
+    }
+
+    /**
+     * Método POST para actualizar una actividad existente.
+     *
+     * @param actividad Objeto actividad con datos actualizados.
+     * @return Redirecciona a la página con lista actualizada.
+     */
+    @PostMapping("/actualizar")
+    public String actualizarActividad(@Valid @ModelAttribute("actividadNueva") Actividad actividad) {
+        actividadService.actualizarActividad(actividad);
+        return "redirect:/horario?fecha=" + actividad.getFecha();
+    }
+
+    /**
+     * Método POST para eliminar una actividad específica por id.
+     *
+     * @param id Identificador de la actividad a eliminar.
+     * @param fecha Fecha para redireccionar la consulta.
+     * @return Redirecciona a la vista con actividades de la fecha.
+     */
+    @PostMapping("/eliminar/{id}")
+    public String eliminarActividad(@PathVariable Long id, @RequestParam LocalDate fecha) {
+        actividadService.eliminarActividad(id);
+        return "redirect:/horario?fecha=" + fecha;
+    }
+}
