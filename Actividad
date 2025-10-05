@@ -1,0 +1,63 @@
+package com.proyecto.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+
+/**
+ * Clase entidad que representa una actividad programada con fecha, hora y descripción.
+ */
+@Entity
+@Table(name = "actividades")
+public class Actividad {
+
+    // Identificador único autogenerado por la base de datos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // Fecha de la actividad (solo fecha, sin tiempo)
+    private LocalDate fecha;
+
+    // Hora de la actividad en formato HH:mm
+    private String hora;
+
+    // Descripción o detalle de la actividad
+    private String descripcion;
+
+    // Constructor vacío necesario para JPA
+    public Actividad() {}
+
+    // Constructor para facilitar la creación de objetos
+    public Actividad(LocalDate fecha, String hora, String descripcion) {
+        this.fecha = fecha;
+        this.hora = hora;
+        this.descripcion = descripcion;
+    }
+
+    // Getters y setters para encapsulamiento de datos
+
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public LocalDate getFecha() {
+        return fecha;
+    }
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+    public String getHora() {
+        return hora;
+    }
+    public void setHora(String hora) {
+        this.hora = hora;
+    }
+    public String getDescripcion() {
+        return descripcion;
+    }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+}
