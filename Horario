@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Gestión de Horarios</title>
+</head>
+<body>
+
+<h1>Gestión de Horarios</h1>
+
+<!-- Formulario para registrar nueva actividad -->
+<form th:action="@{/horario/agregar}" th:object="${actividadNueva}" method="post">
+    Fecha: <input type="date" th:field="*{fecha}" required/><br/>
+    Hora: <input type="time" th:field="*{hora}" required/><br/>
+    Descripción: <input type="text" th:field="*{descripcion}" required/><br/>
+    <button type="submit">Guardar Actividad</button>
+</form>
+
+<hr/>
+
+<!-- Formulario para consultar actividades por fecha -->
+<form action="#" method="get" th:action="@{/horario}">
+    Fecha a consultar: <input type="date" name="fecha" th:value="${fechaConsulta}"/>
+    <button type="submit">Consultar Actividades</button>
+</form>
+
+<!-- Tabla que muestra actividades cuando hay datos -->
+<div th:if="${actividades != null}">
+    <h2>Actividades para <span th:text="${fechaConsulta}"></span></h2>
+    <table border="1">
+        <tr>
+            <th>Hora</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+        <!-- Iterar actividades para mostrar fila por cada una -->
+        <tr th:each="act : ${actividades}">
+            <td th:text="${act.hora}"></td>
+            <td th:text="${act.descripcion}"></td>
+            <td>
+                <!-- Formulario para eliminar actividad -->
+                <form th:action="@{/horario/eliminar/{id}(id=${act.id})}" method="post">
+                    <input type="hidden" name="fecha" th:value="${fechaConsulta}"/>
+                    <button type="submit">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>
